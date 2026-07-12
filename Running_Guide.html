@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Running Guide — EN2H Booking Platform</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.7; color: #1a1a2e; background: #fff; }
+    @media print { body { font-size: 11px; } .page-break { page-break-before: always; } }
+
+    .cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: #fff; text-align: center; padding: 60px 40px; page-break-after: always; }
+    .cover-logo { width: 72px; height: 72px; background: rgba(255,255,255,0.15); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 28px; font-size: 32px; }
+    .cover h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 10px; }
+    .cover h2 { font-size: 18px; font-weight: 300; opacity: 0.75; margin-bottom: 40px; }
+    .cover-divider { width: 80px; height: 3px; background: linear-gradient(90deg, #2cb67d, #7f5af0); margin: 0 auto 40px; border-radius: 2px; }
+    .cover-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 500px; text-align: left; }
+    .cover-meta-item label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; display: block; margin-bottom: 4px; }
+    .cover-meta-item span { font-size: 14px; font-weight: 500; }
+    .cover-badge { margin-top: 50px; padding: 8px 20px; background: rgba(44,182,125,0.25); border: 1px solid rgba(44,182,125,0.5); border-radius: 100px; font-size: 12px; letter-spacing: 0.5px; }
+
+    .content { max-width: 860px; margin: 0 auto; padding: 60px; }
+    h1.section-title { font-size: 24px; font-weight: 700; color: #0f2027; border-bottom: 3px solid #2cb67d; padding-bottom: 10px; margin-bottom: 24px; margin-top: 48px; }
+    h2.sub-title { font-size: 15px; font-weight: 600; color: #203a43; margin: 24px 0 10px; border-left: 4px solid #2cb67d; padding-left: 12px; }
+    p { margin-bottom: 12px; color: #333; }
+    ul, ol { padding-left: 22px; margin-bottom: 14px; }
+    li { margin-bottom: 6px; color: #333; }
+    strong { color: #0f2027; }
+
+    /* Step boxes */
+    .step { display: flex; gap: 20px; margin: 20px 0; }
+    .step-num { flex-shrink: 0; width: 36px; height: 36px; background: linear-gradient(135deg, #2cb67d, #0f9); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; }
+    .step-content h3 { font-size: 14px; font-weight: 600; color: #203a43; margin-bottom: 6px; }
+    .step-content p { margin-bottom: 0; }
+
+    code { font-family: 'Fira Code', monospace; background: #e6f4ef; color: #065f46; padding: 2px 7px; border-radius: 5px; font-size: 11px; }
+    .code-block { font-family: 'Fira Code', monospace; background: #0f2027; color: #cdd6f4; padding: 18px 22px; border-radius: 10px; font-size: 11px; line-height: 1.9; margin: 14px 0 22px; border-left: 4px solid #2cb67d; }
+    .code-block .comment { color: #6a9955; }
+    .code-block .cmd { color: #9cdcfe; }
+
+    table { width: 100%; border-collapse: collapse; margin: 14px 0 22px; font-size: 12px; }
+    th { background: #203a43; color: #fff; padding: 10px 14px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 9px 14px; border-bottom: 1px solid #e0f0ea; }
+    tr:nth-child(even) td { background: #f0faf6; }
+
+    .alert { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
+    .alert-success { background: #ecfdf5; border-color: #2cb67d; color: #065f46; }
+    .alert-warn { background: #fffbeb; border-color: #f59e0b; color: #92400e; }
+    .alert-info { background: #eff6ff; border-color: #3b82f6; color: #1e40af; }
+    .alert-danger { background: #fef2f2; border-color: #ef4444; color: #991b1b; }
+
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 600; }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-yellow { background: #fef3c7; color: #92400e; }
+
+    .toc { background: #f0faf6; border: 1px solid #a7f3d0; border-radius: 10px; padding: 24px 28px; margin: 32px 0; }
+    .toc h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; color: #203a43; }
+    .toc ol { padding-left: 20px; }
+    .toc li { margin-bottom: 6px; }
+    .toc a { color: #2cb67d; text-decoration: none; font-size: 12px; }
+
+    .endpoint-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; background: #f8fafb; border: 1px solid #e0edf0; }
+    .method { font-family: 'Fira Code', monospace; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 5px; min-width: 52px; text-align: center; }
+    .method-post { background: #dbeafe; color: #1e40af; }
+    .method-get { background: #d1fae5; color: #065f46; }
+    .method-put { background: #fef3c7; color: #92400e; }
+    .method-patch { background: #ede9fe; color: #5b21b6; }
+    .method-delete { background: #fee2e2; color: #991b1b; }
+    .endpoint-path { font-family: 'Fira Code', monospace; font-size: 12px; color: #203a43; flex: 1; }
+    .endpoint-desc { font-size: 11px; color: #666; }
+  </style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-logo">🚀</div>
+  <h1>Running Guide</h1>
+  <h2>EN2H Booking Platform REST API</h2>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><label>Document Type</label><span>Installation &amp; Running Guide</span></div>
+    <div class="cover-meta-item"><label>Version</label><span>1.0.0</span></div>
+    <div class="cover-meta-item"><label>Project</label><span>EN2H Backend Internship Assessment</span></div>
+    <div class="cover-meta-item"><label>Date</label><span>July 2026</span></div>
+    <div class="cover-meta-item"><label>Author</label><span>Sayan</span></div>
+    <div class="cover-meta-item"><label>Repository</label><span>github.com/Sayan-467/en2h-booking-platform</span></div>
+  </div>
+  <div class="cover-badge">Step-by-step setup, run, and test instructions</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li><a href="#prereqs">Prerequisites</a></li>
+      <li><a href="#clone">Clone &amp; Install</a></li>
+      <li><a href="#env">Environment Configuration</a></li>
+      <li><a href="#db">Database Setup &amp; Migration</a></li>
+      <li><a href="#run">Running the Application</a></li>
+      <li><a href="#docs">API Documentation (Swagger)</a></li>
+      <li><a href="#test">Running Tests</a></li>
+      <li><a href="#endpoints">Quick API Reference</a></li>
+      <li><a href="#postman">Postman Collection</a></li>
+      <li><a href="#troubleshoot">Troubleshooting</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. Prerequisites -->
+  <h1 class="section-title" id="prereqs">1. Prerequisites</h1>
+  <p>Ensure the following are installed on your machine before proceeding:</p>
+  <table>
+    <tr><th>Tool</th><th>Minimum Version</th><th>Check Command</th></tr>
+    <tr><td>Node.js</td><td>v18.0.0+</td><td><code>node -v</code></td></tr>
+    <tr><td>npm</td><td>v9.0.0+</td><td><code>npm -v</code></td></tr>
+    <tr><td>Git</td><td>Any recent version</td><td><code>git --version</code></td></tr>
+    <tr><td>PostgreSQL</td><td>v14+ (or use Neon free tier)</td><td><code>psql --version</code></td></tr>
+  </table>
+  <div class="alert alert-info">
+    💡 <strong>No local PostgreSQL?</strong> Create a free database at <strong>https://neon.tech</strong> — takes under 2 minutes and provides both a pooled and direct connection URL.
+  </div>
+
+  <!-- 2. Clone -->
+  <h1 class="section-title" id="clone">2. Clone &amp; Install</h1>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h3>Clone the repository</h3>
+      <div class="code-block"><span class="comment"># Clone from GitHub</span>
+git clone https://github.com/Sayan-467/en2h-booking-platform.git
+cd en2h-booking-platform</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h3>Install dependencies</h3>
+      <div class="code-block"><span class="comment"># Install all npm packages (~841 packages)</span>
+npm install</div>
+    </div>
+  </div>
+
+  <!-- 3. Environment -->
+  <h1 class="section-title" id="env">3. Environment Configuration</h1>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h3>Copy the example environment file</h3>
+      <div class="code-block"><span class="comment"># On Linux/Mac:</span>
+cp .env.example .env
+
+<span class="comment"># On Windows (PowerShell):</span>
+Copy-Item .env.example .env</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h3>Fill in your values in <code>.env</code></h3>
+      <div class="code-block"><span class="comment"># App port</span>
+PORT=3000
+
+<span class="comment"># Pooled connection URL (used by the app at runtime)</span>
+<span class="comment"># For Neon: copy the "Pooled connection" string</span>
+DATABASE_URL="postgresql://user:password@host-pooler/dbname?sslmode=require"
+
+<span class="comment"># Direct URL (used by Prisma migrate only)</span>
+<span class="comment"># For Neon: copy the "Direct connection" string (no -pooler in hostname)</span>
+DIRECT_URL="postgresql://user:password@host/dbname?sslmode=require"
+
+<span class="comment"># JWT secrets — use any strong random strings</span>
+JWT_SECRET="your-strong-secret-here"
+JWT_REFRESH_SECRET="your-strong-refresh-secret-here"
+JWT_EXPIRATION="15m"
+JWT_REFRESH_EXPIRATION="7d"</div>
+    </div>
+  </div>
+
+  <div class="alert alert-warn">
+    ⚠️ <strong>Never commit your <code>.env</code> file.</strong> It is already in <code>.gitignore</code>. Only <code>.env.example</code> (with no real secrets) is committed.
+  </div>
+
+  <h2 class="sub-title">Neon PostgreSQL — Finding Your URLs</h2>
+  <ol>
+    <li>Log in at <strong>https://neon.tech</strong></li>
+    <li>Select your project → Click <strong>"Connection Details"</strong></li>
+    <li>For <code>DATABASE_URL</code>: choose <strong>"Pooled connection"</strong> mode → copy the string</li>
+    <li>For <code>DIRECT_URL</code>: choose <strong>"Direct connection"</strong> mode → copy the string</li>
+  </ol>
+
+  <!-- 4. Database -->
+  <h1 class="section-title" id="db">4. Database Setup &amp; Migration</h1>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h3>Generate the Prisma client</h3>
+      <div class="code-block">npx prisma generate</div>
+      <p>Expected output: <code>✔ Generated Prisma Client (v7.x.x)</code></p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h3>Apply migrations to your database</h3>
+      <div class="code-block"><span class="comment"># For production / existing DB — apply existing migrations:</span>
+npx prisma migrate deploy
+
+<span class="comment"># For fresh local development — create + apply:</span>
+npx prisma migrate dev --name init</div>
+      <p>Expected output: <code>Your database is now in sync with your schema.</code></p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h3>(Optional) Open Prisma Studio to inspect the database</h3>
+      <div class="code-block">npx prisma studio</div>
+      <p>Opens a visual DB browser at <code>http://localhost:5555</code></p>
+    </div>
+  </div>
+
+  <!-- 5. Running -->
+  <div class="page-break"></div>
+  <h1 class="section-title" id="run">5. Running the Application</h1>
+
+  <h2 class="sub-title">Development Mode (recommended)</h2>
+  <div class="code-block"><span class="comment"># Starts with hot-reload (watch mode)</span>
+npm run start:dev</div>
+
+  <div class="alert alert-success">
+    ✅ <strong>Success output:</strong><br/>
+    🚀 Application is running on: <strong>http://localhost:3000/api/v1</strong><br/>
+    📚 Swagger docs available at: <strong>http://localhost:3000/api/docs</strong>
+  </div>
+
+  <h2 class="sub-title">Production Mode</h2>
+  <div class="code-block"><span class="comment"># 1. Build the TypeScript to JavaScript</span>
+npm run build
+
+<span class="comment"># 2. Start the production server</span>
+npm run start:prod</div>
+
+  <h2 class="sub-title">Available npm Scripts</h2>
+  <table>
+    <tr><th>Command</th><th>Description</th></tr>
+    <tr><td><code>npm run start:dev</code></td><td>Start in watch/development mode</td></tr>
+    <tr><td><code>npm run start:prod</code></td><td>Start the compiled production build</td></tr>
+    <tr><td><code>npm run build</code></td><td>Compile TypeScript to <code>/dist</code></td></tr>
+    <tr><td><code>npm run test</code></td><td>Run all unit tests</td></tr>
+    <tr><td><code>npm run test:cov</code></td><td>Run tests with coverage report</td></tr>
+    <tr><td><code>npm run lint</code></td><td>Run ESLint on all source files</td></tr>
+    <tr><td><code>npm run format</code></td><td>Run Prettier formatter</td></tr>
+  </table>
+
+  <!-- 6. Swagger -->
+  <h1 class="section-title" id="docs">6. API Documentation (Swagger)</h1>
+  <p>Once the server is running, the interactive Swagger UI is available at:</p>
+  <div class="code-block">http://localhost:3000/api/docs</div>
+
+  <h2 class="sub-title">How to Authenticate in Swagger</h2>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content"><h3>Register or Login</h3><p>Call <code>POST /auth/register</code> or <code>POST /auth/login</code> and copy the <code>accessToken</code> from the response.</p></div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content"><h3>Click "Authorize" 🔒</h3><p>Click the <strong>Authorize</strong> button at the top right of the Swagger page.</p></div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content"><h3>Enter the token</h3><p>In the Value field, type: <code>Bearer &lt;your_access_token&gt;</code> (include the word "Bearer" with a space).</p></div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-content"><h3>Click Authorize → Close</h3><p>All protected endpoints (🔒) will now include the token automatically.</p></div>
+  </div>
+
+  <!-- 7. Tests -->
+  <h1 class="section-title" id="test">7. Running Tests</h1>
+  <div class="code-block"><span class="comment"># Run all 23 unit tests</span>
+npm run test
+
+<span class="comment"># Run with coverage report</span>
+npm run test:cov</div>
+
+  <div class="alert alert-success">
+    ✅ <strong>Expected result:</strong><br/>
+    Test Suites: <strong>4 passed</strong>, 4 total<br/>
+    Tests: <strong>23 passed</strong>, 23 total<br/>
+    Time: ~2s
+  </div>
+
+  <h2 class="sub-title">Test Coverage</h2>
+  <table>
+    <tr><th>Suite</th><th>Tests</th><th>What is Tested</th></tr>
+    <tr><td>auth.service.spec.ts</td><td>5</td><td>Register, login, token generation, error handling</td></tr>
+    <tr><td>services.service.spec.ts</td><td>7</td><td>Create, read, update, soft-delete, not found</td></tr>
+    <tr><td>bookings.service.spec.ts</td><td>9</td><td>All business rules, status transitions, conflict detection</td></tr>
+    <tr><td>app.controller.spec.ts</td><td>2</td><td>Health check</td></tr>
+  </table>
+
+  <!-- 8. Endpoints -->
+  <h1 class="section-title" id="endpoints">8. Quick API Reference</h1>
+  <p>Base URL: <code>http://localhost:3000/api/v1</code></p>
+
+  <h2 class="sub-title">Auth — Public</h2>
+  <div class="endpoint-row"><span class="method method-post">POST</span><span class="endpoint-path">/auth/register</span><span class="endpoint-desc">Register admin/staff user</span></div>
+  <div class="endpoint-row"><span class="method method-post">POST</span><span class="endpoint-path">/auth/login</span><span class="endpoint-desc">Login → returns accessToken + refreshToken</span></div>
+  <div class="endpoint-row"><span class="method method-post">POST</span><span class="endpoint-path">/auth/refresh</span><span class="endpoint-desc">Refresh access token using refreshToken</span></div>
+
+  <h2 class="sub-title">Services</h2>
+  <div class="endpoint-row"><span class="method method-get">GET</span><span class="endpoint-path">/services</span><span class="endpoint-desc">List all (public) — ?page=1&amp;limit=10&amp;isActive=true</span></div>
+  <div class="endpoint-row"><span class="method method-get">GET</span><span class="endpoint-path">/services/:id</span><span class="endpoint-desc">Get by ID (public)</span></div>
+  <div class="endpoint-row"><span class="method method-post">POST</span><span class="endpoint-path">/services</span><span class="endpoint-desc">Create service 🔒 JWT required</span></div>
+  <div class="endpoint-row"><span class="method method-put">PUT</span><span class="endpoint-path">/services/:id</span><span class="endpoint-desc">Update service 🔒 JWT required</span></div>
+  <div class="endpoint-row"><span class="method method-delete">DELETE</span><span class="endpoint-path">/services/:id</span><span class="endpoint-desc">Soft-delete service 🔒 JWT required</span></div>
+
+  <h2 class="sub-title">Bookings</h2>
+  <div class="endpoint-row"><span class="method method-post">POST</span><span class="endpoint-path">/bookings</span><span class="endpoint-desc">Create booking (public — customer)</span></div>
+  <div class="endpoint-row"><span class="method method-post">POST</span><span class="endpoint-path">/bookings/:id/cancel</span><span class="endpoint-desc">Cancel booking (public — customer)</span></div>
+  <div class="endpoint-row"><span class="method method-get">GET</span><span class="endpoint-path">/bookings</span><span class="endpoint-desc">List all 🔒 — ?page=1&amp;limit=10&amp;status=PENDING&amp;search=Jane</span></div>
+  <div class="endpoint-row"><span class="method method-get">GET</span><span class="endpoint-path">/bookings/:id</span><span class="endpoint-desc">Get by ID 🔒 JWT required</span></div>
+  <div class="endpoint-row"><span class="method method-patch">PATCH</span><span class="endpoint-path">/bookings/:id/status</span><span class="endpoint-desc">Update status 🔒 — body: {"status":"CONFIRMED"}</span></div>
+
+  <!-- 9. Postman -->
+  <h1 class="section-title" id="postman">9. Postman Collection</h1>
+  <p>A ready-to-import Postman collection is included in the repository:</p>
+  <div class="code-block">EN2H-Booking-API.postman_collection.json</div>
+
+  <h2 class="sub-title">How to Import</h2>
+  <ol>
+    <li>Open <strong>Postman</strong></li>
+    <li>Click <strong>Import</strong> (top-left)</li>
+    <li>Drag &amp; drop <code>EN2H-Booking-API.postman_collection.json</code> into the import window</li>
+    <li>Click <strong>Import</strong></li>
+  </ol>
+
+  <h2 class="sub-title">Collection Features</h2>
+  <ul>
+    <li>✅ Pre-configured <code>baseUrl</code> variable pointing to <code>http://localhost:3000/api/v1</code></li>
+    <li>✅ Auto-saves <code>accessToken</code>, <code>refreshToken</code>, <code>serviceId</code>, <code>bookingId</code> on each request</li>
+    <li>✅ Automated test assertions on every request</li>
+    <li>✅ Business Rules folder with 7 error-case tests</li>
+    <li>✅ Use <strong>Run Collection</strong> to execute all requests in order</li>
+  </ul>
+
+  <!-- 10. Troubleshooting -->
+  <h1 class="section-title" id="troubleshoot">10. Troubleshooting</h1>
+  <table>
+    <tr><th>Problem</th><th>Solution</th></tr>
+    <tr><td><code>EADDRINUSE: port 3000</code></td><td>Another process is using port 3000. Kill it:<br/><code>npx kill-port 3000</code> or change <code>PORT</code> in <code>.env</code></td></tr>
+    <tr><td><code>P1001: Can't reach database</code></td><td>Check your <code>DATABASE_URL</code> in <code>.env</code>. For migrations use <code>DIRECT_URL</code> (non-pooled).</td></tr>
+    <tr><td><code>401 Unauthorized</code> on protected routes</td><td>Include <code>Authorization: Bearer &lt;token&gt;</code> header. Token expires in 15 min — use <code>POST /auth/refresh</code>.</td></tr>
+    <tr><td><code>nest</code> command not found</td><td>Use <code>npm run start:dev</code> instead of <code>nest start</code>. NestJS CLI is a local dev dependency.</td></tr>
+    <tr><td>Prisma client errors after schema changes</td><td>Run <code>npx prisma generate</code> to regenerate the client.</td></tr>
+    <tr><td>TypeScript errors on startup</td><td>Run <code>npm run build</code> to see all errors. Check <code>tsconfig.json</code>.</td></tr>
+    <tr><td><code>409 Conflict</code> on booking</td><td>The same service + date + time is already booked. Choose a different time slot.</td></tr>
+    <tr><td>Tests failing</td><td>Run <code>npm run test -- --verbose</code> for detailed output.</td></tr>
+  </table>
+
+  <div class="alert alert-info" style="margin-top: 40px;">
+    📚 <strong>Full API docs:</strong> Run the server and visit <code>http://localhost:3000/api/docs</code> for interactive Swagger documentation with live request testing.
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SRS — EN2H Booking Platform</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.7; color: #1a1a2e; background: #fff; }
+    @media print {
+      .no-print { display: none; }
+      body { font-size: 11px; }
+      .page-break { page-break-before: always; }
+    }
+
+    /* Cover Page */
+    .cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: #fff; text-align: center; padding: 60px 40px; page-break-after: always; }
+    .cover-logo { width: 72px; height: 72px; background: rgba(255,255,255,0.15); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 28px; font-size: 32px; }
+    .cover h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 10px; }
+    .cover h2 { font-size: 18px; font-weight: 300; opacity: 0.75; margin-bottom: 40px; }
+    .cover-divider { width: 80px; height: 3px; background: linear-gradient(90deg, #7f5af0, #2cb67d); margin: 0 auto 40px; border-radius: 2px; }
+    .cover-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 500px; text-align: left; }
+    .cover-meta-item label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; display: block; margin-bottom: 4px; }
+    .cover-meta-item span { font-size: 14px; font-weight: 500; }
+    .cover-badge { margin-top: 50px; padding: 8px 20px; background: rgba(127,90,240,0.3); border: 1px solid rgba(127,90,240,0.5); border-radius: 100px; font-size: 12px; letter-spacing: 0.5px; }
+
+    /* Content */
+    .content { max-width: 860px; margin: 0 auto; padding: 60px 60px; }
+    h1.section-title { font-size: 26px; font-weight: 700; color: #0f0c29; border-bottom: 3px solid #7f5af0; padding-bottom: 10px; margin-bottom: 28px; margin-top: 48px; }
+    h2.sub-title { font-size: 16px; font-weight: 600; color: #302b63; margin: 28px 0 10px; border-left: 4px solid #7f5af0; padding-left: 12px; }
+    h3.sub-sub { font-size: 13px; font-weight: 600; color: #444; margin: 18px 0 8px; }
+    p { margin-bottom: 12px; color: #333; }
+    ul, ol { padding-left: 22px; margin-bottom: 14px; }
+    li { margin-bottom: 5px; color: #333; }
+    strong { color: #0f0c29; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 12px; }
+    th { background: #302b63; color: #fff; padding: 10px 14px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 9px 14px; border-bottom: 1px solid #e8e8f0; color: #333; }
+    tr:nth-child(even) td { background: #f7f7fc; }
+
+    /* Code */
+    code { font-family: 'Fira Code', monospace; background: #f0eeff; color: #6b21a8; padding: 2px 7px; border-radius: 5px; font-size: 11px; }
+    .code-block { font-family: 'Fira Code', monospace; background: #1a1a2e; color: #cdd6f4; padding: 18px 22px; border-radius: 10px; font-size: 11px; line-height: 1.8; margin: 14px 0 22px; overflow: auto; border-left: 4px solid #7f5af0; }
+
+    /* Badge */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-purple { background: #ede9fe; color: #5b21b6; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+
+    /* Alert */
+    .alert { padding: 14px 18px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
+    .alert-info { background: #eff6ff; border-color: #3b82f6; color: #1e40af; }
+    .alert-warn { background: #fffbeb; border-color: #f59e0b; color: #92400e; }
+
+    /* TOC */
+    .toc { background: #f7f7fc; border: 1px solid #e0e0f0; border-radius: 10px; padding: 24px 28px; margin: 32px 0; }
+    .toc h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; color: #302b63; }
+    .toc ol { padding-left: 20px; }
+    .toc li { margin-bottom: 6px; }
+    .toc a { color: #7f5af0; text-decoration: none; font-size: 12px; }
+
+    /* Status chips */
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-logo">📋</div>
+  <h1>Software Requirements Specification</h1>
+  <h2>EN2H Booking Platform REST API</h2>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><label>Document Type</label><span>SRS</span></div>
+    <div class="cover-meta-item"><label>Version</label><span>1.0.0</span></div>
+    <div class="cover-meta-item"><label>Project</label><span>EN2H Backend Internship Assessment</span></div>
+    <div class="cover-meta-item"><label>Date</label><span>July 2026</span></div>
+    <div class="cover-meta-item"><label>Author</label><span>Sayan</span></div>
+    <div class="cover-meta-item"><label>Status</label><span>Final</span></div>
+  </div>
+  <div class="cover-badge">Backend Engineering Internship Technical Assessment</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#scope">Project Scope</a></li>
+      <li><a href="#tech">Technology Stack</a></li>
+      <li><a href="#arch">System Architecture</a></li>
+      <li><a href="#db">Database Schema</a></li>
+      <li><a href="#api">API Specification</a></li>
+      <li><a href="#business">Business Rules</a></li>
+      <li><a href="#auth">Authentication &amp; Authorization</a></li>
+      <li><a href="#validation">Input Validation</a></li>
+      <li><a href="#error">Error Handling</a></li>
+      <li><a href="#testing">Testing</a></li>
+      <li><a href="#assumptions">Assumptions</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. Introduction -->
+  <h1 class="section-title" id="intro">1. Introduction</h1>
+  <h2 class="sub-title">1.1 Purpose</h2>
+  <p>This document describes the software requirements for the <strong>EN2H Booking Platform REST API</strong> — a backend system enabling customers to book services and allowing staff/admin users to manage those services and bookings.</p>
+
+  <h2 class="sub-title">1.2 Intended Audience</h2>
+  <ul>
+    <li>Backend engineers reviewing or extending the codebase</li>
+    <li>EN2H assessment evaluators</li>
+    <li>Frontend developers integrating with this API</li>
+  </ul>
+
+  <h2 class="sub-title">1.3 Overview</h2>
+  <p>The system exposes a RESTful API with three core modules: <strong>Authentication</strong>, <strong>Service Management</strong>, and <strong>Booking Management</strong>. It enforces strict business rules, provides standardised error responses, and is fully documented via Swagger UI.</p>
+
+  <!-- 2. Scope -->
+  <h1 class="section-title" id="scope">2. Project Scope</h1>
+  <table>
+    <tr><th>Feature</th><th>In Scope</th></tr>
+    <tr><td>User registration &amp; login with JWT</td><td><span class="badge badge-green">✓ Included</span></td></tr>
+    <tr><td>Access token + Refresh token flow</td><td><span class="badge badge-green">✓ Included</span></td></tr>
+    <tr><td>Service CRUD (with soft delete)</td><td><span class="badge badge-green">✓ Included</span></td></tr>
+    <tr><td>Paginated &amp; filterable list endpoints</td><td><span class="badge badge-green">✓ Included</span></td></tr>
+    <tr><td>Customer booking creation (public)</td><td><span class="badge badge-green">✓ Included</span></td></tr>
+    <tr><td>Booking status management</td><td><span class="badge badge-green">✓ Included</span></td></tr>
+    <tr><td>Business rule enforcement</td><td><span class="badge badge-green">✓ Included</span></td></tr>
+    <tr><td>Swagger / OpenAPI documentation</td><td><span class="badge badge-green">✓ Included</span></td></tr>
+    <tr><td>Unit tests (Jest)</td><td><span class="badge badge-green">✓ Included</span></td></tr>
+    <tr><td>Email notifications</td><td><span class="badge badge-red">✗ Out of Scope</span></td></tr>
+    <tr><td>Frontend / UI</td><td><span class="badge badge-red">✗ Out of Scope</span></td></tr>
+    <tr><td>Payment processing</td><td><span class="badge badge-red">✗ Out of Scope</span></td></tr>
+  </table>
+
+  <!-- 3. Tech Stack -->
+  <h1 class="section-title" id="tech">3. Technology Stack</h1>
+  <table>
+    <tr><th>Layer</th><th>Technology</th><th>Reason</th></tr>
+    <tr><td>Runtime</td><td>Node.js v24</td><td>High performance, async I/O</td></tr>
+    <tr><td>Framework</td><td>NestJS (TypeScript)</td><td>Opinionated structure, DI, decorators</td></tr>
+    <tr><td>ORM</td><td>Prisma v7</td><td>Type-safe, auto-generated client, migrations</td></tr>
+    <tr><td>Database</td><td>PostgreSQL (Neon serverless)</td><td>Reliable, ACID, free tier available</td></tr>
+    <tr><td>Auth</td><td>JWT + Passport.js</td><td>Stateless, scalable authentication</td></tr>
+    <tr><td>Password hashing</td><td>bcrypt (12 rounds)</td><td>Industry standard, slow hashing</td></tr>
+    <tr><td>Validation</td><td>class-validator + class-transformer</td><td>DTO-based declarative validation</td></tr>
+    <tr><td>Documentation</td><td>@nestjs/swagger</td><td>Auto-generated OpenAPI from decorators</td></tr>
+    <tr><td>Testing</td><td>Jest</td><td>Built-in NestJS test runner</td></tr>
+  </table>
+
+  <!-- 4. Architecture -->
+  <h1 class="section-title" id="arch">4. System Architecture</h1>
+  <h2 class="sub-title">4.1 Module Structure</h2>
+  <div class="code-block">src/
+├── main.ts               # Bootstrap: global prefix, pipes, filter, Swagger, CORS
+├── app.module.ts         # Root module — imports all feature modules
+├── prisma/               # Global PrismaModule + PrismaService (driver adapter)
+├── auth/                 # Authentication: JWT strategy, guards, register/login/refresh
+├── services/             # Service CRUD: controller, service, DTOs
+├── bookings/             # Booking management: controller, service, DTOs, business rules
+└── common/
+    └── filters/          # GlobalExceptionFilter — standardised JSON error format</div>
+
+  <h2 class="sub-title">4.2 Request Lifecycle</h2>
+  <ol>
+    <li>Request arrives at NestJS HTTP server</li>
+    <li><strong>ValidationPipe</strong> validates and transforms the DTO (whitelist + forbidNonWhitelisted)</li>
+    <li><strong>JwtAuthGuard</strong> (if protected route) verifies Bearer token via JwtStrategy</li>
+    <li>Controller delegates to Service layer</li>
+    <li>Service applies business rules and calls PrismaService</li>
+    <li>PrismaService executes the query via <code>@prisma/adapter-pg</code> against Neon PostgreSQL</li>
+    <li>Response serialised and returned; <strong>GlobalExceptionFilter</strong> catches any errors</li>
+  </ol>
+
+  <!-- 5. Database -->
+  <h1 class="section-title" id="db">5. Database Schema</h1>
+  <h2 class="sub-title">5.1 User Model</h2>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>UUID</td><td>Primary Key, auto-generated</td></tr>
+    <tr><td>email</td><td>String</td><td>Unique, required</td></tr>
+    <tr><td>password</td><td>String</td><td>bcrypt hashed, required</td></tr>
+    <tr><td>name</td><td>String</td><td>Required</td></tr>
+    <tr><td>createdAt</td><td>DateTime</td><td>Auto-set on create</td></tr>
+    <tr><td>updatedAt</td><td>DateTime</td><td>Auto-updated</td></tr>
+  </table>
+
+  <h2 class="sub-title">5.2 Service Model</h2>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>UUID</td><td>Primary Key, auto-generated</td></tr>
+    <tr><td>title</td><td>String</td><td>Required, min 2 chars</td></tr>
+    <tr><td>description</td><td>String</td><td>Required, min 10 chars</td></tr>
+    <tr><td>duration</td><td>Int</td><td>Required, positive (minutes)</td></tr>
+    <tr><td>price</td><td>Decimal(10,2)</td><td>Required, min 0</td></tr>
+    <tr><td>isActive</td><td>Boolean</td><td>Default: true. False = soft-deleted</td></tr>
+    <tr><td>createdAt</td><td>DateTime</td><td>Auto-set on create</td></tr>
+    <tr><td>updatedAt</td><td>DateTime</td><td>Auto-updated</td></tr>
+  </table>
+
+  <h2 class="sub-title">5.3 Booking Model</h2>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Constraints</th></tr>
+    <tr><td>id</td><td>UUID</td><td>Primary Key, auto-generated</td></tr>
+    <tr><td>customerName</td><td>String</td><td>Required, min 2 chars</td></tr>
+    <tr><td>customerEmail</td><td>String</td><td>Required, valid email</td></tr>
+    <tr><td>customerPhone</td><td>String</td><td>Required, min 5 chars</td></tr>
+    <tr><td>serviceId</td><td>UUID</td><td>FK → Service.id</td></tr>
+    <tr><td>bookingDate</td><td>DateTime</td><td>Required, must be today or future</td></tr>
+    <tr><td>bookingTime</td><td>String</td><td>HH:MM format (24-hour)</td></tr>
+    <tr><td>status</td><td>BookingStatus</td><td>PENDING | CONFIRMED | CANCELLED | COMPLETED</td></tr>
+    <tr><td>notes</td><td>String?</td><td>Optional</td></tr>
+    <tr><td>createdAt</td><td>DateTime</td><td>Auto-set on create</td></tr>
+    <tr><td>updatedAt</td><td>DateTime</td><td>Auto-updated</td></tr>
+  </table>
+  <div class="alert alert-info">
+    <strong>Unique Constraint:</strong> <code>(serviceId, bookingDate, bookingTime)</code> — prevents double-booking of the same service slot.
+  </div>
+
+  <!-- 6. API Specification -->
+  <div class="page-break"></div>
+  <h1 class="section-title" id="api">6. API Specification</h1>
+  <p>Global base path: <code>/api/v1</code> &nbsp;|&nbsp; All responses: <code>Content-Type: application/json</code></p>
+
+  <h2 class="sub-title">6.1 Auth Endpoints</h2>
+  <table>
+    <tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th><th>Status</th></tr>
+    <tr><td><span class="badge badge-blue">POST</span></td><td><code>/auth/register</code></td><td>Public</td><td>Register a new admin/staff user</td><td>201</td></tr>
+    <tr><td><span class="badge badge-blue">POST</span></td><td><code>/auth/login</code></td><td>Public</td><td>Login and receive JWT tokens</td><td>200</td></tr>
+    <tr><td><span class="badge badge-blue">POST</span></td><td><code>/auth/refresh</code></td><td>Public</td><td>Refresh access token</td><td>200</td></tr>
+  </table>
+
+  <h2 class="sub-title">6.2 Service Endpoints</h2>
+  <table>
+    <tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th><th>Status</th></tr>
+    <tr><td><span class="badge badge-blue">POST</span></td><td><code>/services</code></td><td>JWT</td><td>Create a new service</td><td>201</td></tr>
+    <tr><td><span class="badge badge-green">GET</span></td><td><code>/services</code></td><td>Public</td><td>List all (page, limit, isActive)</td><td>200</td></tr>
+    <tr><td><span class="badge badge-green">GET</span></td><td><code>/services/:id</code></td><td>Public</td><td>Get service by ID</td><td>200</td></tr>
+    <tr><td><span class="badge badge-purple">PUT</span></td><td><code>/services/:id</code></td><td>JWT</td><td>Update service fields</td><td>200</td></tr>
+    <tr><td><span class="badge badge-red">DELETE</span></td><td><code>/services/:id</code></td><td>JWT</td><td>Soft-delete (isActive=false)</td><td>200</td></tr>
+  </table>
+
+  <h2 class="sub-title">6.3 Booking Endpoints</h2>
+  <table>
+    <tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th><th>Status</th></tr>
+    <tr><td><span class="badge badge-blue">POST</span></td><td><code>/bookings</code></td><td>Public</td><td>Customer creates a booking</td><td>201</td></tr>
+    <tr><td><span class="badge badge-blue">POST</span></td><td><code>/bookings/:id/cancel</code></td><td>Public</td><td>Customer cancels a booking</td><td>200</td></tr>
+    <tr><td><span class="badge badge-green">GET</span></td><td><code>/bookings</code></td><td>JWT</td><td>List all (page, limit, status, search, serviceId)</td><td>200</td></tr>
+    <tr><td><span class="badge badge-green">GET</span></td><td><code>/bookings/:id</code></td><td>JWT</td><td>Get booking detail</td><td>200</td></tr>
+    <tr><td><span class="badge badge-purple">PATCH</span></td><td><code>/bookings/:id/status</code></td><td>JWT</td><td>Update booking status</td><td>200</td></tr>
+  </table>
+
+  <!-- 7. Business Rules -->
+  <h1 class="section-title" id="business">7. Business Rules</h1>
+  <table>
+    <tr><th>#</th><th>Rule</th><th>Error Response</th></tr>
+    <tr><td>BR-01</td><td>Booking date must be today or in the future</td><td>400 — "Booking date cannot be in the past"</td></tr>
+    <tr><td>BR-02</td><td>Selected service must exist</td><td>404 — "Service with id '...' not found"</td></tr>
+    <tr><td>BR-03</td><td>Selected service must be active (isActive=true)</td><td>400 — "Service '...' is not currently active"</td></tr>
+    <tr><td>BR-04</td><td>No duplicate booking for same serviceId + date + time</td><td>409 — "This service is already booked at the selected date and time"</td></tr>
+    <tr><td>BR-05</td><td>Cancelled bookings cannot have status changed</td><td>400 — "Cancelled bookings cannot have their status changed"</td></tr>
+    <tr><td>BR-06</td><td>Completed bookings cannot be cancelled</td><td>400 — "Completed bookings cannot be cancelled"</td></tr>
+    <tr><td>BR-07</td><td>Already-cancelled bookings cannot be cancelled again</td><td>400 — "Booking is already cancelled"</td></tr>
+  </table>
+
+  <!-- 8. Authentication -->
+  <h1 class="section-title" id="auth">8. Authentication &amp; Authorization</h1>
+  <ul>
+    <li><strong>Strategy:</strong> JWT Bearer tokens via <code>@nestjs/jwt</code> + Passport.js</li>
+    <li><strong>Access Token:</strong> Short-lived (15 minutes), used for protected API calls</li>
+    <li><strong>Refresh Token:</strong> Long-lived (7 days), used only to obtain a new access token</li>
+    <li><strong>Password hashing:</strong> bcrypt with 12 salt rounds</li>
+    <li><strong>Protected endpoints:</strong> Guarded by <code>JwtAuthGuard</code> — validates token and user existence in DB</li>
+  </ul>
+
+  <!-- 9. Validation -->
+  <h1 class="section-title" id="validation">9. Input Validation</h1>
+  <p>All request bodies are validated using <code>class-validator</code> decorators on DTO classes. The global <code>ValidationPipe</code> is configured with:</p>
+  <ul>
+    <li><strong>whitelist: true</strong> — strips unknown properties</li>
+    <li><strong>forbidNonWhitelisted: true</strong> — throws error on unknown properties</li>
+    <li><strong>transform: true</strong> — auto-transforms payloads to typed DTO instances</li>
+  </ul>
+  <h3 class="sub-sub">Key Validations</h3>
+  <table>
+    <tr><th>Field</th><th>Validation</th></tr>
+    <tr><td>email</td><td>Must be a valid email format</td></tr>
+    <tr><td>password</td><td>Minimum 6 characters</td></tr>
+    <tr><td>bookingDate</td><td>Must be ISO date string (YYYY-MM-DD)</td></tr>
+    <tr><td>bookingTime</td><td>Must match regex <code>/^([01]\d|2[0-3]):([0-5]\d)$/</code> (HH:MM)</td></tr>
+    <tr><td>serviceId</td><td>Must be a valid UUID v4</td></tr>
+    <tr><td>price</td><td>Must be a number ≥ 0</td></tr>
+    <tr><td>duration</td><td>Must be a positive integer</td></tr>
+    <tr><td>status</td><td>Must be one of: PENDING, CONFIRMED, CANCELLED, COMPLETED</td></tr>
+  </table>
+
+  <!-- 10. Error Handling -->
+  <h1 class="section-title" id="error">10. Error Handling</h1>
+  <p>A <strong>GlobalExceptionFilter</strong> catches all exceptions and transforms them to a consistent JSON shape:</p>
+  <div class="code-block">{
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "Booking date cannot be in the past",
+  "timestamp": "2026-07-12T04:00:00.000Z",
+  "path": "/api/v1/bookings"
+}</div>
+  <table>
+    <tr><th>HTTP Code</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>400</td><td>Bad Request</td><td>Validation error, business rule violation</td></tr>
+    <tr><td>401</td><td>Unauthorized</td><td>Missing or expired JWT token, invalid credentials</td></tr>
+    <tr><td>404</td><td>Not Found</td><td>Service or booking ID does not exist</td></tr>
+    <tr><td>409</td><td>Conflict</td><td>Duplicate booking slot, email already registered</td></tr>
+    <tr><td>500</td><td>Internal Server Error</td><td>Unexpected server-side error</td></tr>
+  </table>
+
+  <!-- 11. Testing -->
+  <h1 class="section-title" id="testing">11. Testing</h1>
+  <table>
+    <tr><th>Test Suite</th><th>Tests</th><th>Coverage Focus</th></tr>
+    <tr><td>auth.service.spec.ts</td><td>5</td><td>Register, login success/failure, JWT token generation</td></tr>
+    <tr><td>services.service.spec.ts</td><td>7</td><td>CRUD operations, NotFoundException</td></tr>
+    <tr><td>bookings.service.spec.ts</td><td>9</td><td>All business rules (BR-01 → BR-07), status transitions</td></tr>
+    <tr><td>app.controller.spec.ts</td><td>2</td><td>App bootstrap health check</td></tr>
+    <tr><td><strong>Total</strong></td><td><strong>23</strong></td><td><strong>All passing</strong></td></tr>
+  </table>
+  <p>Run with: <code>npm run test</code> &nbsp;|&nbsp; Coverage: <code>npm run test:cov</code></p>
+
+  <!-- 12. Assumptions -->
+  <h1 class="section-title" id="assumptions">12. Assumptions Made</h1>
+  <ol>
+    <li><strong>Two-role model:</strong> Admin/Staff (JWT-authenticated) and Customers (unauthenticated public access).</li>
+    <li><strong>Soft delete:</strong> Services are never hard-deleted; <code>isActive=false</code> preserves booking history.</li>
+    <li><strong>Booking time as string:</strong> <code>bookingTime</code> is stored as <code>HH:MM</code> — timezone handling was not specified.</li>
+    <li><strong>No ownership verification for cancellation:</strong> Customers cancel using the booking ID alone; OTP verification is out of scope.</li>
+    <li><strong>Two Neon URLs:</strong> Pooled URL for runtime, direct URL for migrations (Neon serverless requirement).</li>
+    <li><strong>No email notifications:</strong> Not specified in the assessment requirements.</li>
+    <li><strong>UUID primary keys:</strong> Used for all models — better security and distributed compatibility vs. auto-increment integers.</li>
+    <li><strong>Pagination defaults:</strong> <code>page=1</code>, <code>limit=10</code> when not specified.</li>
+  </ol>
+
+</div>
+</body>
+</html>
