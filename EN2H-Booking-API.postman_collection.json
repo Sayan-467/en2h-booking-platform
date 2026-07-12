@@ -1,0 +1,663 @@
+{
+  "info": {
+    "name": "EN2H Booking Platform API",
+    "_postman_id": "en2h-booking-api-collection",
+    "description": "Complete REST API collection for the EN2H Booking Platform. \n\n## Setup\n1. Set the `baseUrl` variable to `http://localhost:3000/api/v1`\n2. Register or Login to auto-capture the JWT token\n3. All protected endpoints use the `accessToken` variable automatically\n\n## Flow\n1. Register → Login (token auto-saved)\n2. Create Service\n3. Create Booking\n4. Manage Booking Status",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "serviceId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bookingId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints. Register and Login auto-save tokens to collection variables.",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', res.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', res.refreshToken);",
+                  "    pm.test('Register successful', () => pm.response.to.have.status(201));",
+                  "    pm.test('Access token returned', () => pm.expect(res.accessToken).to.be.a('string'));",
+                  "    pm.test('User email correct', () => pm.expect(res.user.email).to.equal('admin@en2h.com'));",
+                  "    console.log('✅ Tokens saved to collection variables');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@en2h.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "description": "Register a new admin/staff user. Automatically saves accessToken and refreshToken to collection variables."
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', res.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', res.refreshToken);",
+                  "    pm.test('Login successful', () => pm.response.to.have.status(200));",
+                  "    pm.test('Access token returned', () => pm.expect(res.accessToken).to.be.a('string'));",
+                  "    console.log('✅ Tokens saved to collection variables');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@en2h.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "description": "Login and receive JWT tokens. Automatically saves accessToken and refreshToken to collection variables."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', res.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', res.refreshToken);",
+                  "    pm.test('Token refreshed', () => pm.response.to.have.status(200));",
+                  "    console.log('✅ New tokens saved');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/refresh", "host": ["{{baseUrl}}"], "path": ["auth", "refresh"] },
+            "description": "Exchange a refresh token for a new access token."
+          }
+        },
+        {
+          "name": "Login - Invalid Credentials (should 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 401 Unauthorized', () => pm.response.to.have.status(401));",
+                  "pm.test('Error message present', () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.message).to.equal('Invalid credentials');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@en2h.com\",\n  \"password\": \"wrongpassword\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "description": "Should return 401 Unauthorized with 'Invalid credentials' message."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "description": "Service management endpoints. Write operations require JWT auth.",
+      "item": [
+        {
+          "name": "Create Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('serviceId', res.id);",
+                  "    pm.test('Service created', () => pm.response.to.have.status(201));",
+                  "    pm.test('Service has ID', () => pm.expect(res.id).to.be.a('string'));",
+                  "    pm.test('isActive defaults to true', () => pm.expect(res.isActive).to.equal(true));",
+                  "    console.log('✅ Service ID saved:', res.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Deep Tissue Massage\",\n  \"description\": \"A professional full body deep tissue massage session\",\n  \"duration\": 60,\n  \"price\": 75.00,\n  \"isActive\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/services", "host": ["{{baseUrl}}"], "path": ["services"] },
+            "description": "Create a new service. Requires JWT auth. Saves serviceId to collection variable."
+          }
+        },
+        {
+          "name": "Get All Services",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has data array', () => pm.expect(pm.response.json().data).to.be.an('array'));",
+                  "pm.test('Has meta pagination', () => pm.expect(pm.response.json().meta).to.have.property('total'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/services?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["services"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "isActive", "value": "true", "disabled": true }
+              ]
+            },
+            "description": "Get all services with pagination. Public endpoint. Enable isActive query param to filter."
+          }
+        },
+        {
+          "name": "Get Service By ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Service has title', () => pm.expect(pm.response.json().title).to.be.a('string'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/services/{{serviceId}}", "host": ["{{baseUrl}}"], "path": ["services", "{{serviceId}}"] },
+            "description": "Get a specific service by ID. Public endpoint."
+          }
+        },
+        {
+          "name": "Update Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Title updated', () => pm.expect(pm.response.json().title).to.equal('Deep Tissue Massage - Premium'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Deep Tissue Massage - Premium\",\n  \"price\": 90.00\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/services/{{serviceId}}", "host": ["{{baseUrl}}"], "path": ["services", "{{serviceId}}"] },
+            "description": "Update a service. All fields optional. Requires JWT auth."
+          }
+        },
+        {
+          "name": "Delete Service (Soft Delete)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Service deactivated', () => pm.expect(pm.response.json().isActive).to.equal(false));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/services/{{serviceId}}", "host": ["{{baseUrl}}"], "path": ["services", "{{serviceId}}"] },
+            "description": "Soft-delete a service (sets isActive=false). Requires JWT auth."
+          }
+        },
+        {
+          "name": "Create Service - No Auth (should 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 401 Unauthorized', () => pm.response.to.have.status(401));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Service\",\n  \"description\": \"Should fail without token\",\n  \"duration\": 30,\n  \"price\": 50\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/services", "host": ["{{baseUrl}}"], "path": ["services"] },
+            "description": "Should return 401 — no auth token provided."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "description": "Booking management. POST /bookings and POST /bookings/:id/cancel are public. All GET and PATCH require JWT.",
+      "item": [
+        {
+          "name": "Create Booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const res = pm.response.json();",
+                  "    pm.collectionVariables.set('bookingId', res.id);",
+                  "    pm.test('Booking created', () => pm.response.to.have.status(201));",
+                  "    pm.test('Status is PENDING', () => pm.expect(res.status).to.equal('PENDING'));",
+                  "    pm.test('Service info included', () => pm.expect(res.service).to.have.property('title'));",
+                  "    console.log('✅ Booking ID saved:', res.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"Jane Doe\",\n  \"customerEmail\": \"jane@example.com\",\n  \"customerPhone\": \"+923001234567\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"bookingDate\": \"2026-08-15\",\n  \"bookingTime\": \"14:00\",\n  \"notes\": \"Please prepare aromatherapy oils\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] },
+            "description": "Create a new booking. Public endpoint — no auth needed. Saves bookingId to collection variable.\n\n⚠️ Update bookingDate to a future date before running."
+          }
+        },
+        {
+          "name": "Get All Bookings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has data array', () => pm.expect(pm.response.json().data).to.be.an('array'));",
+                  "pm.test('Has pagination meta', () => pm.expect(pm.response.json().meta).to.have.property('total'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/bookings?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "PENDING", "disabled": true },
+                { "key": "search", "value": "Jane", "disabled": true },
+                { "key": "serviceId", "value": "{{serviceId}}", "disabled": true }
+              ]
+            },
+            "description": "Get all bookings with pagination, search, and status filtering. Requires JWT auth.\n\nOptional query params:\n- `status` — PENDING | CONFIRMED | CANCELLED | COMPLETED\n- `search` — search by customer name/email/phone\n- `serviceId` — filter by service"
+          }
+        },
+        {
+          "name": "Get Booking By ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has customer name', () => pm.expect(pm.response.json().customerName).to.be.a('string'));",
+                  "pm.test('Has service info', () => pm.expect(pm.response.json().service).to.have.property('title'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}"] },
+            "description": "Get a specific booking by ID. Requires JWT auth."
+          }
+        },
+        {
+          "name": "Update Status → CONFIRMED",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is CONFIRMED', () => pm.expect(pm.response.json().status).to.equal('CONFIRMED'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"CONFIRMED\"\n}" },
+            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}/status", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}", "status"] },
+            "description": "Update booking status to CONFIRMED. Requires JWT auth."
+          }
+        },
+        {
+          "name": "Update Status → COMPLETED",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is COMPLETED', () => pm.expect(pm.response.json().status).to.equal('COMPLETED'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"COMPLETED\"\n}" },
+            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}/status", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}", "status"] },
+            "description": "Update booking status to COMPLETED. Requires JWT auth."
+          }
+        },
+        {
+          "name": "Cancel Booking (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is CANCELLED', () => pm.expect(pm.response.json().status).to.equal('CANCELLED'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}", "cancel"] },
+            "description": "Cancel a booking. Public endpoint — no auth needed (customer self-cancel)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Business Rules (Error Cases)",
+      "description": "Test cases that verify business rule enforcement. All should return errors.",
+      "item": [
+        {
+          "name": "❌ Booking in the Past (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('Correct error message', () => {",
+                  "    const msg = pm.response.json().message;",
+                  "    pm.expect(msg).to.include('past');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"Test User\",\n  \"customerEmail\": \"test@example.com\",\n  \"customerPhone\": \"+123456789\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"bookingDate\": \"2020-01-01\",\n  \"bookingTime\": \"10:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] },
+            "description": "Should return 400 — booking date is in the past."
+          }
+        },
+        {
+          "name": "❌ Duplicate Time Slot (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 409 Conflict', () => pm.response.to.have.status(409));",
+                  "pm.test('Correct error message', () => {",
+                  "    const msg = pm.response.json().message;",
+                  "    pm.expect(msg).to.include('already booked');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"Another Customer\",\n  \"customerEmail\": \"other@example.com\",\n  \"customerPhone\": \"+987654321\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"bookingDate\": \"2026-08-15\",\n  \"bookingTime\": \"14:00\",\n  \"notes\": \"Same slot as existing booking\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] },
+            "description": "Should return 409 — same serviceId + date + time already booked.\n\n⚠️ Run 'Create Booking' first, then run this with the same date/time."
+          }
+        },
+        {
+          "name": "❌ Invalid Time Format (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('Validation error for bookingTime', () => {",
+                  "    const msg = pm.response.json().message;",
+                  "    const messages = Array.isArray(msg) ? msg : [msg];",
+                  "    pm.expect(messages.some(m => m.includes('HH:MM'))).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"Test User\",\n  \"customerEmail\": \"test@example.com\",\n  \"customerPhone\": \"+123456789\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"bookingDate\": \"2026-08-20\",\n  \"bookingTime\": \"2:30pm\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] },
+            "description": "Should return 400 — bookingTime must be in HH:MM 24-hour format."
+          }
+        },
+        {
+          "name": "❌ Cancel Already Cancelled (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('Correct error message', () => {",
+                  "    pm.expect(pm.response.json().message).to.include('already cancelled');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}", "cancel"] },
+            "description": "Should return 400 — booking is already cancelled.\n\n⚠️ Run 'Cancel Booking' first, then run this again."
+          }
+        },
+        {
+          "name": "❌ Modify Cancelled Booking Status (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('Correct error message', () => {",
+                  "    pm.expect(pm.response.json().message).to.include('Cancelled bookings');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"CONFIRMED\"\n}" },
+            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}/status", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}", "status"] },
+            "description": "Should return 400 — cancelled bookings cannot have their status changed.\n\n⚠️ Run 'Cancel Booking' first."
+          }
+        },
+        {
+          "name": "❌ Access Protected Route Without Token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 401 Unauthorized', () => pm.response.to.have.status(401));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] },
+            "description": "Should return 401 — no JWT token provided on a protected route."
+          }
+        },
+        {
+          "name": "❌ Non-Existent Service (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 404 Not Found', () => pm.response.to.have.status(404));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"Test User\",\n  \"customerEmail\": \"test@example.com\",\n  \"customerPhone\": \"+123456789\",\n  \"serviceId\": \"00000000-0000-0000-0000-000000000000\",\n  \"bookingDate\": \"2026-08-20\",\n  \"bookingTime\": \"11:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] },
+            "description": "Should return 404 — service with given ID does not exist."
+          }
+        }
+      ]
+    }
+  ]
+}

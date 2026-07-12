@@ -1,0 +1,16 @@
+# Dependencies
+/node_modules/
+
+# Environment variables (never commit secrets)
+.env
+
+# Build output
+/dist/
+/coverage/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
